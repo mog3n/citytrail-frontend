@@ -65,9 +65,9 @@
               :response-format :json
               :keywords?       true}))
 
-(defn load-pois [pois]
+(defn load-extra-places [place-ids]
   (ajax/POST "https://my-project-1550937209990.appspot.com/location/compute"
-             {:params          {:locations pois}
+             {:params          {:locations place-ids}
               :handler         #(swap! app-info assoc :extra-places %)
               :error-handler   error-handler
               :format          :json
@@ -115,6 +115,11 @@
       {:on-click #(load-points-of-interest)}
       "Load Points of Interest"]])
 
+(defn get-extra-places-button []
+  [:button.btn
+    {:on-click #(load-extra-places (:points-of-interest-ids @app-info))}
+    "Load Extra Places"])
+
 ;; Home Page and Extra --------------------------------------------------------
 (defn point-of-interest [data]
   [:div
@@ -136,6 +141,8 @@
      [:hr]
      [points-of-interest-form]
      [display-points-of-interest]
+     [:hr]
+     [get-extra-places-button]
      [:hr]
      [:div (str @form-info)]
      [:hr]
