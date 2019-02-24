@@ -52,9 +52,9 @@
 }
 
 .it-title {
-  font-weight: 500;
-  font-size: 2em;
-  color: #0057FF;
+  font-weight: 900;
+  font-size: 3em;
+  color: #250074;
 }
 
 .footer {
@@ -89,7 +89,7 @@
 }
 
 .city{
-  font-size: 15pt;
+  font-size: 18pt;
   font-weight: 300;
   color: #0057FF;
 }
