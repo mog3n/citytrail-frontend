@@ -47,8 +47,7 @@
 ;; Handlers -------------------------------------------------------------------
 (defn start-point-handler [data]
   (do
-    (swap! app-info assoc :start-point data :points-of-interest [] :points-of-interest-ids [] :extra-places nil)
-    (swap! form-info assoc :points-of-interest [])))
+    (swap! app-info assoc :start-point data :points-of-interest [] :points-of-interest-ids [] :extra-places nil)))
 
 (defn point-of-interest-handler [data]
   (swap! app-info update :points-of-interest #(conj % data))
