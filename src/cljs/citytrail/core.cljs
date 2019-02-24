@@ -91,7 +91,7 @@
 
 (defn load-points-of-interest []
   (swap! app-info assoc :points-of-interest [])
-  (for [poi (:points-of-interest @form-info)]
+  (doseq [poi (:points-of-interest @form-info)]
     (load-point poi point-of-interest-handler)))
 
 (defn points-of-interest-form []
