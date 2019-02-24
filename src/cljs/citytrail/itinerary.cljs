@@ -1,5 +1,5 @@
 (ns citytrail.itinerary
-(:require 
+(:require
 	[reagent.core :as reagent]
 )
 	)
