@@ -208,6 +208,13 @@ input[type='text']{
   font-size: 11pt;
 }
 
+.btn-form:hover {background-color: #F5F5F5}
+
+.btn-form:active {
+  background-color: #F5F5F5;
+  transform: translateY(4px);
+}
+
 input[type='text']:hover{
   background-color: #2AA6FF;
 }
@@ -243,7 +250,6 @@ input[type='text']::placeholder{
 
   font-weight: 500;
   font-size: 13pt;
-
 }
 
 .btn-go{
