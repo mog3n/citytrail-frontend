@@ -116,7 +116,7 @@
       {:type "text"
        :placeholder "Four Seasons Hotel, Paris"
        :on-change #(swap! form-info assoc :start-point (-> % .-target .-value))}]
-    [:button.button
+    [:button.button.btn-form
       {:on-click #(load-point (:start-point @form-info) start-point-handler)}
       "Verify"]])
 
@@ -133,14 +133,14 @@
   [:div
     [:input
       {:type "text"
-      :placeholder "Eiffel Tower"
+       :placeholder "Eiffel Tower"
        :on-change #(swap! form-info assoc :point-of-interest-editor (-> % .-target .-value))}]
-    [:button.button
+    [:button.button.btn-form
       {:on-click #(load-point (:point-of-interest-editor @form-info) point-of-interest-handler)}
       "Add"]
       (display-points-of-interest)
     (if (not-empty (:points-of-interest @app-info))
-        [:button.button.red
+        [:button.button.red.btn-form
           {:on-click #(remove-poi)}
           "Remove"])])
 
@@ -210,11 +210,10 @@
 
 (defn itinerary-page []
   (fn [] [:div
+          [:div.container.center [:a {:href (path-for :index)} [:img.logo-small {:src "https://storage.googleapis.com/www.unclejoesfamilyrestaurant.com/clojure/justlogo.png"}]]]
           [itinerary/header itinerary-info]
           [itinerary/body itinerary-info]
-        ]
-    )
-)
+        ]))
 
 ;; -------------------------
 ;; Translate routes -> page components

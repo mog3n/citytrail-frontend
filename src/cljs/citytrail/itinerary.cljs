@@ -1,8 +1,7 @@
 (ns citytrail.itinerary
-(:require
-	[reagent.core :as reagent]
-)
-	)
+	(:require
+		[reagent.core :as reagent]
+		))
 
 ; atom
 (defonce itinerary-data (reagent/atom {
@@ -54,26 +53,20 @@
 (defn draw-timestamp [component]
 	[:div.timeline-container
 		[:div.timestamp-container
-		[:span.timestamp
-			(get-in @itinerary-data [:header :starting-date])
-			]
-		]
-		[:div.timeline-line]
-	])
+			[:span.timestamp
+				(get-in @itinerary-data [:header :starting-date])]]
+		[:div.timeline-line]])
 
 (defn draw-timeline [component]
 	[:div.timeline-container
 		;[:div.timeline-line]
 		;[:div.timeline-time (get-in component [:data :time])]
-		[:div.timeline-line]
-	]
-)
+		[:div.timeline-line]])
 
 (defn starting-point [component]
-[:div.container-poi
-      [:div.container-title "🛏 Starting Point"]
-      [:div.poi-name (get-in component [:data :name])]]
- )
+	[:div.container-poi
+    [:div.container-title "🛏 Starting Point"]
+    [:div.poi-name (get-in component [:data :name])]])
 
 (defn point-of-interest [component]
 	[:div
@@ -81,8 +74,7 @@
 		  [:div.container-poi
 	      [:div.container-title "📸 Point of Interest"]
 	      [:div.poi-name (get-in component [:data :name])]]
-	]
-  )
+	])
 
 
 (defn recommended [component]
@@ -93,49 +85,33 @@
 	      [:div.container-title.recommended-title "Recommended"]
 	      ;[:div.container-title.recommended-title (get-in component [:data :title])]
 	      [:div.poi-name.recommended-name (get-in component [:data :name])]]
-	]
-)
+	])
 
 (defn see-more [component]
 	[:div
 		[:div.left-thing]
-		[:div.btn-container
-			"See more recommendations"
-		]
-	]
-)
+		[:div.btn-container "See more recommendations"]])
 
 (defn get-component[component]
-
-
 	(cond
 		(= "poi" (get-in component [:type])) 				(point-of-interest component)
 		(= "start" (get-in component [:type])) 				(starting-point component)
 		(= "timeline" (get-in component [:type]))			(draw-timeline component)
 		(= "nearby" (get-in component [:type]))				(recommended component)
 		(= "nearby-seemore" (get-in component [:type]))		(see-more component)
-	)
-)
+	))
 
 (defn body [thedata]
 	[:div
 		[draw-timestamp]
 		(for [component (get-in @thedata [:components])]
-			[get-component component]
-		)
-	]
-)
+			[get-component component])])
 
 (defn header [thedata]
 	[:div.center
-		(println thedata)
-		[:img.logo-small {:src "https://storage.googleapis.com/www.unclejoesfamilyrestaurant.com/clojure/justlogo.png"}]
 		[:div.container.center
 				[:div.row.center
 					[:h1.it-title "Itinerary"]]
 				[:div.row
-					[:h3.city (get-in @thedata [:header :city])]	
-				]
-		]
-	]
-)
+					[:h3.city (get-in @thedata [:header :city])]
+				]]])
