@@ -38,6 +38,8 @@
 
 (defonce app-info (reagent/atom {:show?                  true
                                  :start-point            nil
+                                 :start-point-id         []
+                                 :start-point-extra      nil
                                  :points-of-interest     []
                                  :points-of-interest-ids []
                                  :extra-places           nil}))
@@ -47,7 +49,12 @@
 ;; Handlers -------------------------------------------------------------------
 (defn start-point-handler [data]
   (do
-    (swap! app-info assoc :start-point data :points-of-interest [] :points-of-interest-ids [] :extra-places nil)))
+    (swap! app-info assoc :start-point            data
+                          :start-point-id         [(get-in data [:places 0 :place_id])]
+                          :start-point-extra      nil
+                          :points-of-interest     []
+                          :points-of-interest-ids []
+                          :extra-places           nil)))
 
 (defn point-of-interest-handler [data]
   (swap! app-info update :points-of-interest #(conj % data))
@@ -55,6 +62,12 @@
 
 (defn error-handler [{:keys [status status-text]}]
   (js/alert (str status " - " status-text)))
+
+(defn start-point-extra-handler [data]
+  (swap! app-info assoc :start-point-extra data))
+
+(defn extra-places-handler [data]
+  (swap! app-info assoc :extra-places data))
 
 ;; Requests -------------------------------------------------------------------
 (defn load-point [point handler]
@@ -80,18 +93,22 @@
   (swap! itinerary-info update :components #(conj % {:type "start"
                                                      :data {:name (get-in @app-info [:start-point :places 0 :name])
                                                             :address (get-in @app-info [:start-point :places 0 :formatted_address])}}))
+  (swap! itinerary-info update :components #(conj % {:type "nearby"
+                                                     :data {:name (get-in @app-info [:start-point-extra 0 :nearby 0 :name])}}))
+  (swap! itinerary-info update :components #(conj % {:type "nearby"
+                                                     :data {:name (get-in @app-info [:start-point-extra 0 :nearby 1 :name])}}))
   (doseq [poi-extra (:extra-places @app-info)]
     (parse-poi-extra  poi-extra)))
 
-(defn load-extra-places [place-ids]
+(defn load-extra-places [place-ids handler fin]
   (ajax/POST "https://my-project-1550937209990.appspot.com/location/compute"
              {:params          {:locations place-ids}
-              :handler         #(swap! app-info assoc :extra-places %)
+              :handler         handler
               :error-handler   error-handler
               :format          :json
               :response-format :json
               :keywords?       true
-              :finally         load-itinerary-data}))
+              :finally         fin}))
 
 ;; Forms ----------------------------------------------------------------------
 (defn start-point-form []
@@ -124,9 +141,13 @@
     (for [poi (:points-of-interest @app-info)]
       [:p (get-in poi [:places 0 :name])])])
 
+(defn create-itinerary-data-fn []
+  (load-extra-places (:start-point-id @app-info) start-point-extra-handler
+  #(load-extra-places (:points-of-interest-ids @app-info) extra-places-handler load-itinerary-data)))
+
 (defn create-itinerary-data []
   [:button.btn.btn-primary
-    {:on-click #(load-extra-places (:points-of-interest-ids @app-info))}
+    {:on-click #(create-itinerary-data-fn)}
     "Load Itinerary Data"])
 
 ;; Home Page and Extra --------------------------------------------------------
