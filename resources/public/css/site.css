@@ -190,6 +190,7 @@ input[type='text']{
 }
 
 .button{
+  cursor: hand;
   background-color: #fff;
   border-width: 1px;
   border-color: #0094FF;
@@ -206,6 +207,10 @@ input[type='text']{
 
   font-weight: 600;
   font-size: 11pt;
+}
+
+.button:active {
+  background-color: #;
 }
 
 input[type='text']:hover{
