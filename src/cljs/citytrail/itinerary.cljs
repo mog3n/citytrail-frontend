@@ -90,7 +90,8 @@
 		  [:div.left-thing]
 		  [:draw-timestamp ""]
 		  [:div.container-poi.recommended-container
-	      [:div.container-title.recommended-title (get-in component [:data :title])]
+	      [:div.container-title.recommended-title "Recommended"]
+	      ;[:div.container-title.recommended-title (get-in component [:data :title])]
 	      [:div.poi-name.recommended-name (get-in component [:data :name])]]
 	]
 )
@@ -119,7 +120,7 @@
 (defn body [thedata]
 	[:div
 		[draw-timestamp]
-		(for [component (get-in @itinerary-data [:components])]
+		(for [component (get-in @thedata [:components])]
 			[get-component component]
 		)
 	]
@@ -127,10 +128,11 @@
 
 (defn header [thedata]
 	[:div.container.table
+		(println thedata)
 		[:div.table-cell
 			[:div.row.inline-block
 				[:h1.it-title "Itinerary"]
-				[:h3.city (get-in @itinerary-data [:header :city])]
+				[:h3.city (get-in @thedata [:header :city])]
 		]
 		]
 	]
