@@ -251,6 +251,8 @@ input[type='text']::placeholder{
   color: #fff;
   border: 0;
   margin-top: 10px;
+  height: 40px;
+  font-size: 14pt;
 }
 
 .red{
