@@ -99,36 +99,44 @@
   [:div
     [:input
       {:type "text"
+      :placeholder "Four Seasons Hotel, Paris"
        :on-change #(swap! form-info assoc :start-point (-> % .-target .-value))}]
-    [:button.btn
+    [:button.button
       {:on-click #(load-point (:start-point @form-info) start-point-handler)}
-      "Load Starting Point"]])
+      "Verify"]])
 
 (defn remove-poi []
   (swap! app-info update :points-of-interest #(vec (drop-last %)))
   (swap! app-info update :points-of-interest-ids #(vec (drop-last %))))
 
+(defn display-points-of-interest []
+  [:div.poi-list
+    (for [poi (:points-of-interest @app-info)]
+      [:div.poi-item (get-in poi [:places 0 :name])])])
+
 (defn points-of-interest-form []
   [:div
     [:input
       {:type "text"
+      :placeholder "Eiffel Tower"
        :on-change #(swap! form-info assoc :point-of-interest-editor (-> % .-target .-value))}]
-    [:button.btn
+    [:button.button
       {:on-click #(load-point (:point-of-interest-editor @form-info) point-of-interest-handler)}
-      "Add Point of Interest"]
-    [:button.btn.btn-danger
-      {:on-click #(remove-poi)}
-      "Remove Point of Interest"]])
+      "Add"]
+      (display-points-of-interest)
 
-(defn display-points-of-interest []
-  [:div
-    (for [poi (:points-of-interest @app-info)]
-      [:p (get-in poi [:places 0 :name])])])
+    (if (not-empty (:points-of-interest @app-info))
+        [:button.button.red
+          {:on-click #(remove-poi)}
+          "Remove"])
+    ]
+  )
+
 
 (defn create-itinerary-data []
-  [:button.btn.btn-primary
+  [:button.button.btn-go
     {:on-click #(load-extra-places (:points-of-interest-ids @app-info))}
-    "Load Itinerary Data"])
+    "Go"])
 
 ;; Home Page and Extra --------------------------------------------------------
 (defn point-of-interest [data]
@@ -151,16 +159,21 @@
 (defn home-page []
   (fn []
     [:span.main
-    [:a {:href (path-for :itinerary)}
-      [:button.btn "Launch Itinerary"]]
-     [:h1 "Welcome to CityTrail"]
-     [start-point-form] [:hr]
-     [points-of-interest-form]
-     [display-points-of-interest] [:hr]
-     [create-itinerary-data] [:hr]
-     [toggle-app-info] [:hr]
-     [display-app-info]
-     [:div "Itinerary Data: " @itinerary-info] [:hr]]))
+    ;[:a {:href (path-for :itinerary)}
+      ;[:button.btn "Launch Itinerary"]]
+
+      [:img.logo {:src "https://storage.googleapis.com/www.unclejoesfamilyrestaurant.com/clojure/citytrail.png"}]
+      [:div.container
+        [:div.label "Where will you be staying?"]
+         [start-point-form]
+         [:div.label "Points of Interest"]
+         [points-of-interest-form]
+         [create-itinerary-data]
+         ;[toggle-app-info] [:hr]
+         ;[display-app-info]
+         ;[:div "Itinerary Data: " @itinerary-info] [:hr]]
+         ]]
+       ))
 
 (defn items-page []
   (fn []
