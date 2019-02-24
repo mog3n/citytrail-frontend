@@ -24,24 +24,32 @@
     (:path (reitit/match-by-name router route))))
 
 (path-for :about)
+
 ;; -------------------------
 ;; Page components
 
-(defonce form-info (reagent/atom {:start-point        nil
-                                  :points-of-interest []}))
+;; App Data -------------------------------------------------------------------
+(defonce form-info (reagent/atom {:start-point              nil
+                                  :point-of-interest-editor nil
+                                  :points-of-interest       []}))
 
 (defonce app-info (reagent/atom {:start-point        nil
-                                 :points-of-interest []}))
+                                 :points-of-interest []
+                                 :extra-places       nil}))
 
+;; Handlers -------------------------------------------------------------------
 (defn start-point-handler [data]
-  (swap! app-info assoc :start-point data))
+  (do
+    (swap! app-info assoc :start-point data :points-of-interest [])
+    (swap! form-info assoc :points-of-interest [])))
 
-(defn point-handler [data]
+(defn point-of-interest-handler [data]
   (swap! app-info update :points-of-interest #(conj % data)))
 
 (defn error-handler [{:keys [status status-text]}]
   (js/alert (str status " - " status-text)))
 
+;; Requests -------------------------------------------------------------------
 (defn load-point [point handler]
   (ajax/POST "https://my-project-1550937209990.appspot.com/location/search"
              {:params          {:query point}
@@ -51,7 +59,7 @@
               :response-format :json
               :keywords?       true}))
 
-(defn load-poi [pois]
+(defn load-pois [pois]
   (ajax/POST "https://my-project-1550937209990.appspot.com/location/compute"
              {:params          {:locations pois}
               :handler         #(swap! app-info assoc :extra-places %)
@@ -60,27 +68,64 @@
               :response-format :json
               :keywords?       true}))
 
-(defn button []
-  [:button.btn
-    {:on-click load-point}
-    "Load Start Point"])
-
+;; Forms ----------------------------------------------------------------------
 (defn start-point-form []
   [:div
-    [:input {:type "text" :on-change #(swap! form-info assoc :start-point (-> % .-target .-value))}]
-    [:button.btn {:on-click #(load-point (:start-point @form-info) start-point-handler)} "Load Starting Point"]])
+    [:input
+      {:type "text"
+       :on-change #(swap! form-info assoc :start-point (-> % .-target .-value))}]
+    [:button.btn
+      {:on-click #(load-point (:start-point @form-info) start-point-handler)}
+      "Load Starting Point"]])
 
+(defn add-poi []
+  (swap! form-info update :points-of-interest #(conj % (:point-of-interest-editor @form-info))))
+
+(defn remove-poi []
+  (swap! form-info update :points-of-interest #(vec (drop-last %))))
+
+(defn display-points-of-interest []
+  [:div
+    (for [poi (:points-of-interest @form-info)]
+      [:p poi])])
+
+(defn load-points-of-interest []
+  (swap! app-info assoc :points-of-interest [])
+  (for [poi (:points-of-interest @form-info)]
+    (load-point poi point-of-interest-handler)))
+
+(defn points-of-interest-form []
+  [:div
+    [:input
+      {:type "text"
+       :on-change #(swap! form-info assoc :point-of-interest-editor (-> % .-target .-value))}]
+    [:button.btn
+      {:on-click #(add-poi)}
+      "Add Point of Interest"]
+    [:button.btn.btn-danger
+      {:on-click #(remove-poi)}
+      "Remove Point of Interest"]
+    [:button.btn
+      {:on-click #(load-points-of-interest)}
+      "Load Points of Interest"]])
+
+;; Home Page and Extra --------------------------------------------------------
 (defn home-page []
   (fn []
     [:span.main
-     [:h1 "Welcome to citytrail"]
+     [:h1 "Welcome to CityTrail"]
      ;[:ul
       ;[:li [:a {:href (path-for :items)} "Items of citytrail"]]
       ;[:li [:a {:href "/borken/link"} "Borken link"]]]
      [start-point-form]
+     [:hr]
+     [points-of-interest-form]
+     [display-points-of-interest]
+     [:hr]
      [:div (str @form-info)]
-     [:div (str @app-info)]]))
-
+     [:hr]
+     [:div (str @app-info)]
+     [:hr]]))
 
 (defn items-page []
   (fn []
@@ -91,7 +136,6 @@
                   [:a {:href (path-for :item {:item-id item-id})} "Item: " item-id]])
                (range 1 60))]]))
 
-
 (defn item-page []
   (fn []
     (let [routing-data (session/get :route)
@@ -100,11 +144,9 @@
        [:h1 (str "Item " item " of citytrail")]
        [:p [:a {:href (path-for :items)} "Back to the list of items"]]])))
 
-
 (defn about-page []
   (fn [] [:span.main
           [:h1 "About citytrail"]]))
-
 
 ;; -------------------------
 ;; Translate routes -> page components
@@ -116,7 +158,6 @@
     :items #'items-page
     :item #'item-page))
 
-
 ;; -------------------------
 ;; Page mounting component
 
@@ -124,13 +165,14 @@
   (fn []
     (let [page (:current-page (session/get :route))]
       [:div
-       [:header
-        [:p [:a {:href (path-for :index)} "Home"] " | "
-         [:a {:href (path-for :about)} "About citytrail"]]]
+       ;[:header
+        ;[:p [:a {:href (path-for :index)} "Home"] " | "
+         ;[:a {:href (path-for :about)} "About citytrail"]]]
        [page]
-       [:footer
-        [:p "citytrail was generated by the "
-         [:a {:href "https://github.com/reagent-project/reagent-template"} "Reagent Template"] "."]]])))
+       ;[:footer
+        ;[:p "citytrail was generated by the "
+         ;[:a {:href "https://github.com/reagent-project/reagent-template"} "Reagent Template"] "."]]
+         ])))
 
 ;; -------------------------
 ;; Initialize app
