@@ -150,9 +150,9 @@
 
 (defn create-itinerary-data []
   [:a {:href (path-for :itinerary)}
-    [:button.btn.btn-primary
+    [:button.button.btn-go
       {:on-click #(create-itinerary-data-fn)}
-      "Load Itinerary Data"]])
+      "Go"]])
 
 ;; Home Page and Extra --------------------------------------------------------
 (defn point-of-interest [data]
