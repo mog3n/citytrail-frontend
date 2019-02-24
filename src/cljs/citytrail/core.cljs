@@ -114,7 +114,7 @@
   [:div
     [:input
       {:type "text"
-      :placeholder "Four Seasons Hotel, Paris"
+       :placeholder "Four Seasons Hotel, Paris"
        :on-change #(swap! form-info assoc :start-point (-> % .-target .-value))}]
     [:button.button
       {:on-click #(load-point (:start-point @form-info) start-point-handler)}
@@ -139,14 +139,10 @@
       {:on-click #(load-point (:point-of-interest-editor @form-info) point-of-interest-handler)}
       "Add"]
       (display-points-of-interest)
-
     (if (not-empty (:points-of-interest @app-info))
         [:button.button.red
           {:on-click #(remove-poi)}
-          "Remove"])
-    ]
-  )
-
+          "Remove"])])
 
 (defn create-itinerary-data-fn []
   (load-extra-places (:start-point-id @app-info) start-point-extra-handler
@@ -180,21 +176,16 @@
 (defn home-page []
   (fn []
     [:span.main
-    ;[:a {:href (path-for :itinerary)}
-      ;[:button.btn "Launch Itinerary"]]
-
       [:img.logo {:src "https://storage.googleapis.com/www.unclejoesfamilyrestaurant.com/clojure/citytrail.png"}]
       [:div.container
         [:div.label "Where will you be staying?"]
-         [start-point-form]
-         [:div.label "Points of Interest"]
-         [points-of-interest-form]
-         [create-itinerary-data]
-         ;[toggle-app-info] [:hr]
-         ;[display-app-info]
-         ;[:div "Itinerary Data: " @itinerary-info] [:hr]]
-         ]]
-       ))
+        [start-point-form]
+        [:div.label "Points of Interest"]
+        [points-of-interest-form]
+        [create-itinerary-data]
+        ;[toggle-app-info] [:hr]
+        ;[display-app-info]
+        ]]))
 
 (defn items-page []
   (fn []
