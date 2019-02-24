@@ -70,6 +70,13 @@
     [:input {:type "text" :on-change #(swap! form-info assoc :start-point (-> % .-target .-value))}]
     [:button.btn {:on-click #(load-point (:start-point @form-info) start-point-handler)} "Load Starting Point"]])
 
+(defn point-of-interest [data]
+  [:div
+    [:row
+      [:h4 📷"Point of Interest"]
+      [:h1 (get-in data [:data :name])]]]
+  )
+
 (defn home-page []
   (fn []
     [:span.main
