@@ -127,13 +127,15 @@
 )
 
 (defn header [thedata]
-	[:div.container.table
+	[:div.center
 		(println thedata)
-		[:div.table-cell
-			[:div.row.inline-block
-				[:h1.it-title "Itinerary"]
-				[:h3.city (get-in @thedata [:header :city])]
-		]
+		[:img.logo-small {:src "https://storage.googleapis.com/www.unclejoesfamilyrestaurant.com/clojure/justlogo.png"}]
+		[:div.container.center
+				[:div.row.center
+					[:h1.it-title "Itinerary"]]
+				[:div.row
+					[:h3.city (get-in @thedata [:header :city])]	
+				]
 		]
 	]
 )

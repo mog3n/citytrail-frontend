@@ -52,9 +52,9 @@
 }
 
 .it-title {
-  padding-left: 10px;
-  font-weight: 300;
+  font-weight: 500;
   font-size: 2em;
+  color: #0057FF;
 }
 
 .footer {
@@ -89,12 +89,9 @@
 }
 
 .city{
-  float: right;
-  margin-top: 8px;
-  margin-left: 15px;
-
-  font-size: 17pt;
+  font-size: 15pt;
   font-weight: 300;
+  color: #0057FF;
 }
 
 h1, h2, h3 {
@@ -253,6 +250,14 @@ input[type='text']::placeholder{
   margin-top: 10px;
   height: 40px;
   font-size: 14pt;
+}
+
+.center{
+  text-align:center;
+}
+
+.logo-small {
+  width: 50%;
 }
 
 .red{
