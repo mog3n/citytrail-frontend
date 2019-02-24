@@ -37,18 +37,20 @@
                                   :point-of-interest-editor nil
                                   :points-of-interest       []}))
 
-(defonce app-info (reagent/atom {:start-point        nil
-                                 :points-of-interest []
-                                 :extra-places       nil}))
+(defonce app-info (reagent/atom {:start-point            nil
+                                 :points-of-interest     []
+                                 :points-of-interest-ids []
+                                 :extra-places           nil}))
 
 ;; Handlers -------------------------------------------------------------------
 (defn start-point-handler [data]
   (do
-    (swap! app-info assoc :start-point data :points-of-interest [])
+    (swap! app-info assoc :start-point data :points-of-interest [] :points-of-interest-ids [])
     (swap! form-info assoc :points-of-interest [])))
 
 (defn point-of-interest-handler [data]
-  (swap! app-info update :points-of-interest #(conj % data)))
+  (swap! app-info update :points-of-interest #(conj % data))
+  (swap! app-info update :points-of-interest-ids #(conj % (get-in data [:places 0 :place_id]))))
 
 (defn error-handler [{:keys [status status-text]}]
   (js/alert (str status " - " status-text)))
@@ -94,7 +96,7 @@
       [:p poi])])
 
 (defn load-points-of-interest []
-  (swap! app-info assoc :points-of-interest [])
+  (swap! app-info assoc :points-of-interest [] :points-of-interest-ids [])
   (doseq [poi (:points-of-interest @form-info)]
     (load-point poi point-of-interest-handler)))
 
