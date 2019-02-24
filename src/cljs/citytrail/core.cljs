@@ -123,6 +123,9 @@
 (defn home-page []
   (fn []
     [:span.main
+    [:a {:href (path-for :itinerary)}
+      [:button.btn "Launch Itinerary"]
+    ]
      [:h1 "Welcome to CityTrail"]
      ;[:ul
       ;[:li [:a {:href (path-for :items)} "Items of citytrail"]]
