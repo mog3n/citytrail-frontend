@@ -70,7 +70,7 @@
 
 (defn load-extra-places [place-ids]
   (ajax/POST "https://my-project-1550937209990.appspot.com/location/compute"
-             {:params          {:locations (str place-ids)}
+             {:params          {:locations place-ids}
               :handler         #(swap! app-info assoc :extra-places %)
               :error-handler   error-handler
               :format          :json
