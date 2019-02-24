@@ -37,7 +37,8 @@
                                   :point-of-interest-editor nil
                                   :points-of-interest       []}))
 
-(defonce app-info (reagent/atom {:start-point            nil
+(defonce app-info (reagent/atom {:show?                  true
+                                 :start-point            nil
                                  :points-of-interest     []
                                  :points-of-interest-ids []
                                  :extra-places           nil}))
@@ -151,6 +152,19 @@
       [:h4 "📷 Point of Interest"]
       [:h1 (get-in data [:data :name])]]])
 
+(defn display-app-info []
+  (if (:show? @app-info)
+    [:div
+      [:div (str @form-info)]
+      [:hr]
+      [:div (str @app-info)]
+      [:hr]]))
+
+(defn toggle-app-info []
+  [:button.btn
+    {:on-click #(swap! app-info update :show? not)}
+    "Toggle App Info"])
+
 (defn home-page []
   (fn []
     [:span.main
@@ -170,11 +184,10 @@
      [:hr]
      [create-itinerary-data]
      [:hr]
-     [:div (str @form-info)]
+     [toggle-app-info]
      [:hr]
-     [:div (str @app-info)]
-     [:hr]
-     [:div (str @itinerary-info)]
+     [display-app-info]
+     [:div "Itinerary Data: " @itinerary-info]
      [:hr]]))
 
 (defn items-page []
