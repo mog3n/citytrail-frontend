@@ -90,7 +90,8 @@
 		  [:div.left-thing]
 		  [:draw-timestamp ""]
 		  [:div.container-poi.recommended-container
-	      [:div.container-title.recommended-title (get-in component [:data :title])]
+	      [:div.container-title.recommended-title "Recommended"]
+	      ;[:div.container-title.recommended-title (get-in component [:data :title])]
 	      [:div.poi-name.recommended-name (get-in component [:data :name])]]
 	]
 )
@@ -127,6 +128,7 @@
 
 (defn header [thedata]
 	[:div.container.table
+		(println thedata)
 		[:div.table-cell
 			[:div.row.inline-block
 				[:h1.it-title "Itinerary"]
