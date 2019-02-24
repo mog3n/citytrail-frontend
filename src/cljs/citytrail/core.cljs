@@ -176,7 +176,7 @@
 (defn home-page []
   (fn []
     [:span.main
-      [:img.logo {:src "https://storage.googleapis.com/www.unclejoesfamilyrestaurant.com/clojure/citytrail.png"}]
+      [:img.logo {:src "https://storage.googleapis.com/www.unclejoesfamilyrestaurant.com/clojure/citii.png"}]
       [:div.container
         [:div.label "Where will you be staying?"]
         [start-point-form]
@@ -239,7 +239,7 @@
          ;[:a {:href (path-for :about)} "About citytrail"]]]
        [page]
        [:footer.footer
-        [:p "CityTrail ❤"]]
+        [:p "2019 © Citii.tech"]]
          ])))
 
 ;; -------------------------
