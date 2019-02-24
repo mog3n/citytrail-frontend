@@ -36,7 +36,7 @@
 (defonce form-info (reagent/atom {:start-point              nil
                                   :point-of-interest-editor nil}))
 
-(defonce app-info (reagent/atom {:show?                  true
+(defonce app-info (reagent/atom {:show?                  false
                                  :start-point            nil
                                  :start-point-id         []
                                  :start-point-extra      nil
@@ -48,13 +48,12 @@
 
 ;; Handlers -------------------------------------------------------------------
 (defn start-point-handler [data]
-  (do
-    (swap! app-info assoc :start-point            data
-                          :start-point-id         [(get-in data [:places 0 :place_id])]
-                          :start-point-extra      nil
-                          :points-of-interest     []
-                          :points-of-interest-ids []
-                          :extra-places           nil)))
+  (swap! app-info assoc :start-point            data
+                        :start-point-id         [(get-in data [:places 0 :place_id])]
+                        :start-point-extra      nil
+                        :points-of-interest     []
+                        :points-of-interest-ids []
+                        :extra-places           nil))
 
 (defn point-of-interest-handler [data]
   (swap! app-info update :points-of-interest #(conj % data))
@@ -146,9 +145,10 @@
   #(load-extra-places (:points-of-interest-ids @app-info) extra-places-handler load-itinerary-data)))
 
 (defn create-itinerary-data []
-  [:button.btn.btn-primary
-    {:on-click #(create-itinerary-data-fn)}
-    "Load Itinerary Data"])
+  [:a {:href (path-for :itinerary)}
+    [:button.btn.btn-primary
+      {:on-click #(create-itinerary-data-fn)}
+      "Load Itinerary Data"]])
 
 ;; Home Page and Extra --------------------------------------------------------
 (defn point-of-interest [data]
@@ -161,7 +161,8 @@
   (if (:show? @app-info)
     [:div
       [:div (str @form-info)] [:hr]
-      [:div (str @app-info)] [:hr]]))
+      [:div (str @app-info)] [:hr]
+      [:div (str @itinerary-info)] [:hr]]))
 
 (defn toggle-app-info []
   [:button.btn
@@ -179,8 +180,7 @@
      [display-points-of-interest] [:hr]
      [create-itinerary-data] [:hr]
      [toggle-app-info] [:hr]
-     [display-app-info]
-     [:div "Itinerary Data: " @itinerary-info] [:hr]]))
+     [display-app-info]]))
 
 (defn items-page []
   (fn []
