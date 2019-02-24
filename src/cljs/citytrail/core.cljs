@@ -42,10 +42,12 @@
                                  :points-of-interest-ids []
                                  :extra-places           nil}))
 
+(defonce itinerary-info (reagent/atom {}))
+
 ;; Handlers -------------------------------------------------------------------
 (defn start-point-handler [data]
   (do
-    (swap! app-info assoc :start-point data :points-of-interest [] :points-of-interest-ids [])
+    (swap! app-info assoc :start-point data :points-of-interest [] :points-of-interest-ids [] :extra-places nil)
     (swap! form-info assoc :points-of-interest [])))
 
 (defn point-of-interest-handler [data]
@@ -67,7 +69,7 @@
 
 (defn load-extra-places [place-ids]
   (ajax/POST "https://my-project-1550937209990.appspot.com/location/compute"
-             {:params          {:locations place-ids}
+             {:params          {:locations (str place-ids)}
               :handler         #(swap! app-info assoc :extra-places %)
               :error-handler   error-handler
               :format          :json
@@ -96,7 +98,7 @@
       [:p poi])])
 
 (defn load-points-of-interest []
-  (swap! app-info assoc :points-of-interest [] :points-of-interest-ids [])
+  (swap! app-info assoc :points-of-interest [] :points-of-interest-ids [] :extra-places nil)
   (doseq [poi (:points-of-interest @form-info)]
     (load-point poi point-of-interest-handler)))
 
@@ -119,6 +121,28 @@
   [:button.btn
     {:on-click #(load-extra-places (:points-of-interest-ids @app-info))}
     "Load Extra Places"])
+
+(defn parse-poi-extra [{:keys [place nearby]}]
+  (swap! itinerary-info update :components #(conj % {:type "poi"
+                                                     :data {:name (:name place)}}))
+  (swap! itinerary-info update :components #(conj % {:type "nearby"
+                                                     :data {:name (get-in nearby [0 :name])}}))
+  (swap! itinerary-info update :components #(conj % {:type "nearby"
+                                                     :data {:name (get-in nearby [1 :name])}})))
+
+(defn load-itinerary-data []
+  (reset! itinerary-info {:header {} :components []})
+  (swap! itinerary-info assoc :header {:city (str (get-in @app-info [:start-point :places 0 :city]) ", " (get-in @app-info [:start-point :places 0 :country]))})
+  (swap! itinerary-info update :components #(conj % {:type "start"
+                                                     :data {:name (get-in @app-info [:start-point :places 0 :name])
+                                                            :address (get-in @app-info [:start-point :places 0 :formatted_address])}}))
+  (doseq [poi-extra (:extra-places @app-info)]
+    (parse-poi-extra  poi-extra)))
+
+(defn create-itinerary-data []
+  [:button.btn.btn-primary
+    {:on-click #(load-itinerary-data)}
+    "Load Itinerary Data"])
 
 ;; Home Page and Extra --------------------------------------------------------
 (defn point-of-interest [data]
@@ -144,9 +168,13 @@
      [:hr]
      [get-extra-places-button]
      [:hr]
+     [create-itinerary-data]
+     [:hr]
      [:div (str @form-info)]
      [:hr]
      [:div (str @app-info)]
+     [:hr]
+     [:div (str @itinerary-info)]
      [:hr]]))
 
 (defn items-page []
