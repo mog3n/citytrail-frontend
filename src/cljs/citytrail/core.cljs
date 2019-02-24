@@ -110,6 +110,12 @@
       "Load Points of Interest"]])
 
 ;; Home Page and Extra --------------------------------------------------------
+(defn point-of-interest [data]
+  [:div
+    [:row
+      [:h4 "📷 Point of Interest"]
+      [:h1 (get-in data [:data :name])]]])
+
 (defn home-page []
   (fn []
     [:span.main
