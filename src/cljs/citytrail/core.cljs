@@ -5,7 +5,9 @@
    [reagent.session :as session]
    [reitit.frontend :as reitit]
    [clerk.core :as clerk]
-   [accountant.core :as accountant]))
+   [accountant.core :as accountant]
+   [citytrail.itinerary :as itinerary]
+   ))
 
 ;; -------------------------
 ;; Routes
@@ -17,6 +19,7 @@
      ["" :items]
      ["/:item-id" :item]]
     ["/about" :about]
+    ["/itinerary" :itinerary]
     ]))
 
 (defn path-for [route & [params]]
@@ -155,6 +158,13 @@
   (fn [] [:span.main
           [:h1 "About citytrail"]]))
 
+(defn itinerary-page []
+  (fn [] [:div
+      [itinerary/header]
+      [itinerary/body]
+    ])
+  )
+
 ;; -------------------------
 ;; Translate routes -> page components
 
@@ -163,7 +173,8 @@
     :index #'home-page
     :about #'about-page
     :items #'items-page
-    :item #'item-page))
+    :item #'item-page
+    :itinerary #'itinerary-page))
 
 ;; -------------------------
 ;; Page mounting component
