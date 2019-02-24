@@ -27,51 +27,59 @@
 ;; -------------------------
 ;; Page components
 
-(defonce wow (reagent/atom {:cities 0 :trails 0}))
+(defonce form-info (reagent/atom {:start-point        nil
+                                  :points-of-interest []}))
 
-(defn handler [response]
-  (js/alert (str response)))
+(defonce app-info (reagent/atom {:start-point        nil
+                                 :points-of-interest []}))
+
+(defn start-point-handler [data]
+  (swap! app-info assoc :start-point data))
+
+(defn point-handler [data]
+  (swap! app-info update :points-of-interest #(conj % data)))
 
 (defn error-handler [{:keys [status status-text]}]
-  (js/alert (str "Ouch: " status " - " status-text)))
+  (js/alert (str status " - " status-text)))
 
-(defn load-wow []
+(defn load-point [point handler]
   (ajax/POST "https://my-project-1550937209990.appspot.com/location/search"
-             {:params          {:query "CN Tower"}
-              :handler         #(reset! wow %)
+             {:params          {:query point}
+              :handler         handler
               :error-handler   error-handler
               :format          :json
               :response-format :json
-              :keywords?       true
-              }))
+              :keywords?       true}))
+
+(defn load-poi [pois]
+  (ajax/POST "https://my-project-1550937209990.appspot.com/location/compute"
+             {:params          {:locations pois}
+              :handler         #(swap! app-info assoc :extra-places %)
+              :error-handler   error-handler
+              :format          :json
+              :response-format :json
+              :keywords?       true}))
 
 (defn button []
   [:button.btn
-    {:on-click load-wow}
-    "Guide Me"])
+    {:on-click load-point}
+    "Load Start Point"])
 
-(defn yah []
+(defn start-point-form []
   [:div
-    [:h1 "Yah"]
-    [:p (str @wow)]
-    [button]])
-
-(defn kelson [text]
-  [:div
-    [:h3 "TESTING " text]
-    [:p "testing again"]])
+    [:input {:type "text" :on-change #(swap! form-info assoc :start-point (-> % .-target .-value))}]
+    [:button.btn {:on-click #(load-point (:start-point @form-info) start-point-handler)} "Load Starting Point"]])
 
 (defn home-page []
   (fn []
     [:span.main
      [:h1 "Welcome to citytrail"]
-     [:ul
-      [:li [:a {:href (path-for :items)} "Items of citytrail"]]
-      [:li [:a {:href "/borken/link"} "Borken link"]]]
-     [yah]
-     [kelson "A"]
-     [kelson "B"]]))
-
+     ;[:ul
+      ;[:li [:a {:href (path-for :items)} "Items of citytrail"]]
+      ;[:li [:a {:href "/borken/link"} "Borken link"]]]
+     [start-point-form]
+     [:div (str @form-info)]
+     [:div (str @app-info)]]))
 
 
 (defn items-page []
