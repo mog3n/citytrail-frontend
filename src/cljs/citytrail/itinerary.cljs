@@ -67,7 +67,7 @@
 		]
 		[:div.timeline-line]
 	]
-	
+
 )
 
 (defn draw-timeline [component]

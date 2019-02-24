@@ -34,8 +34,7 @@
 
 ;; App Data -------------------------------------------------------------------
 (defonce form-info (reagent/atom {:start-point              nil
-                                  :point-of-interest-editor nil
-                                  :points-of-interest       []}))
+                                  :point-of-interest-editor nil}))
 
 (defonce app-info (reagent/atom {:show?                  true
                                  :start-point            nil
@@ -68,61 +67,6 @@
               :response-format :json
               :keywords?       true}))
 
-(defn load-extra-places [place-ids]
-  (ajax/POST "https://my-project-1550937209990.appspot.com/location/compute"
-             {:params          {:locations place-ids}
-              :handler         #(swap! app-info assoc :extra-places %)
-              :error-handler   error-handler
-              :format          :json
-              :response-format :json
-              :keywords?       true}))
-
-;; Forms ----------------------------------------------------------------------
-(defn start-point-form []
-  [:div
-    [:input
-      {:type "text"
-       :on-change #(swap! form-info assoc :start-point (-> % .-target .-value))}]
-    [:button.btn
-      {:on-click #(load-point (:start-point @form-info) start-point-handler)}
-      "Load Starting Point"]])
-
-(defn add-poi []
-  (swap! form-info update :points-of-interest #(conj % (:point-of-interest-editor @form-info))))
-
-(defn remove-poi []
-  (swap! form-info update :points-of-interest #(vec (drop-last %))))
-
-(defn display-points-of-interest []
-  [:div
-    (for [poi (:points-of-interest @form-info)]
-      [:p poi])])
-
-(defn load-points-of-interest []
-  (swap! app-info assoc :points-of-interest [] :points-of-interest-ids [] :extra-places nil)
-  (doseq [poi (:points-of-interest @form-info)]
-    (load-point poi point-of-interest-handler)))
-
-(defn points-of-interest-form []
-  [:div
-    [:input
-      {:type "text"
-       :on-change #(swap! form-info assoc :point-of-interest-editor (-> % .-target .-value))}]
-    [:button.btn
-      {:on-click #(add-poi)}
-      "Add Point of Interest"]
-    [:button.btn.btn-danger
-      {:on-click #(remove-poi)}
-      "Remove Point of Interest"]
-    [:button.btn
-      {:on-click #(load-points-of-interest)}
-      "Load Points of Interest"]])
-
-(defn get-extra-places-button []
-  [:button.btn
-    {:on-click #(load-extra-places (:points-of-interest-ids @app-info))}
-    "Load Extra Places"])
-
 (defn parse-poi-extra [{:keys [place nearby]}]
   (swap! itinerary-info update :components #(conj % {:type "poi"
                                                      :data {:name (:name place)}}))
@@ -140,9 +84,50 @@
   (doseq [poi-extra (:extra-places @app-info)]
     (parse-poi-extra  poi-extra)))
 
+(defn load-extra-places [place-ids]
+  (ajax/POST "https://my-project-1550937209990.appspot.com/location/compute"
+             {:params          {:locations place-ids}
+              :handler         #(swap! app-info assoc :extra-places %)
+              :error-handler   error-handler
+              :format          :json
+              :response-format :json
+              :keywords?       true
+              :finally         load-itinerary-data}))
+
+;; Forms ----------------------------------------------------------------------
+(defn start-point-form []
+  [:div
+    [:input
+      {:type "text"
+       :on-change #(swap! form-info assoc :start-point (-> % .-target .-value))}]
+    [:button.btn
+      {:on-click #(load-point (:start-point @form-info) start-point-handler)}
+      "Load Starting Point"]])
+
+(defn remove-poi []
+  (swap! app-info update :points-of-interest #(vec (drop-last %)))
+  (swap! app-info update :points-of-interest-ids #(vec (drop-last %))))
+
+(defn points-of-interest-form []
+  [:div
+    [:input
+      {:type "text"
+       :on-change #(swap! form-info assoc :point-of-interest-editor (-> % .-target .-value))}]
+    [:button.btn
+      {:on-click #(load-point (:point-of-interest-editor @form-info) point-of-interest-handler)}
+      "Add Point of Interest"]
+    [:button.btn.btn-danger
+      {:on-click #(remove-poi)}
+      "Remove Point of Interest"]])
+
+(defn display-points-of-interest []
+  [:div
+    (for [poi (:points-of-interest @app-info)]
+      [:p (get-in poi [:places 0 :name])])])
+
 (defn create-itinerary-data []
   [:button.btn.btn-primary
-    {:on-click #(load-itinerary-data)}
+    {:on-click #(load-extra-places (:points-of-interest-ids @app-info))}
     "Load Itinerary Data"])
 
 ;; Home Page and Extra --------------------------------------------------------
@@ -155,10 +140,8 @@
 (defn display-app-info []
   (if (:show? @app-info)
     [:div
-      [:div (str @form-info)]
-      [:hr]
-      [:div (str @app-info)]
-      [:hr]]))
+      [:div (str @form-info)] [:hr]
+      [:div (str @app-info)] [:hr]]))
 
 (defn toggle-app-info []
   [:button.btn
@@ -169,26 +152,15 @@
   (fn []
     [:span.main
     [:a {:href (path-for :itinerary)}
-      [:button.btn "Launch Itinerary"]
-    ]
+      [:button.btn "Launch Itinerary"]]
      [:h1 "Welcome to CityTrail"]
-     ;[:ul
-      ;[:li [:a {:href (path-for :items)} "Items of citytrail"]]
-      ;[:li [:a {:href "/borken/link"} "Borken link"]]]
-     [start-point-form]
-     [:hr]
+     [start-point-form] [:hr]
      [points-of-interest-form]
-     [display-points-of-interest]
-     [:hr]
-     [get-extra-places-button]
-     [:hr]
-     [create-itinerary-data]
-     [:hr]
-     [toggle-app-info]
-     [:hr]
+     [display-points-of-interest] [:hr]
+     [create-itinerary-data] [:hr]
+     [toggle-app-info] [:hr]
      [display-app-info]
-     [:div "Itinerary Data: " @itinerary-info]
-     [:hr]]))
+     [:div "Itinerary Data: " @itinerary-info] [:hr]]))
 
 (defn items-page []
   (fn []
@@ -214,9 +186,7 @@
 (defn itinerary-page []
   (fn [] [:div
       [itinerary/header]
-      [itinerary/body]
-    ])
-  )
+      [itinerary/body]]))
 
 ;; -------------------------
 ;; Translate routes -> page components
@@ -240,9 +210,9 @@
         ;[:p [:a {:href (path-for :index)} "Home"] " | "
          ;[:a {:href (path-for :about)} "About citytrail"]]]
        [page]
-       ;[:footer
-        ;[:p "citytrail was generated by the "
-         ;[:a {:href "https://github.com/reagent-project/reagent-template"} "Reagent Template"] "."]]
+       [:footer
+        [:p "CityTrail was generated by the "
+         [:a {:href "https://github.com/reagent-project/reagent-template"} "Reagent Template"] "."]]
          ])))
 
 ;; -------------------------
