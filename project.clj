@@ -13,6 +13,7 @@
                  [ring "1.7.1"]
                  [ring/ring-defaults "0.3.2"]
                  [hiccup "1.0.5"]
+                 [cljs-ajax "0.8.0"]
                  [yogthos/config "1.1.1"]
                  [org.clojure/clojurescript "1.10.520"
                   :scope "provided"]
@@ -94,7 +95,7 @@
                                   [figwheel-sidecar "0.5.18"]
                                   [nrepl "0.6.0"]
                                   [pjstadig/humane-test-output "0.9.0"]
-                                  
+
  ]
 
                    :source-paths ["env/dev/clj"]

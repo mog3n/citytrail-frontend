@@ -1,5 +1,6 @@
 (ns citytrail.core
   (:require
+   [ajax.core :as ajax]
    [reagent.core :as reagent :refer [atom]]
    [reagent.session :as session]
    [reitit.frontend :as reitit]
@@ -26,13 +27,50 @@
 ;; -------------------------
 ;; Page components
 
+(defonce wow (reagent/atom {:cities 0 :trails 0}))
+
+(defn handler [response]
+  (js/alert (str response)))
+
+(defn error-handler [{:keys [status status-text]}]
+  (js/alert (str "Ouch: " status " - " status-text)))
+
+(defn load-wow []
+  (ajax/POST "https://my-project-1550937209990.appspot.com/location/search"
+             {:params          {:query "CN Tower"}
+              :handler         #(reset! wow %)
+              :error-handler   error-handler
+              :format          :json
+              :response-format :json
+              :keywords?       true
+              }))
+
+(defn button []
+  [:button.btn
+    {:on-click load-wow}
+    "Guide Me"])
+
+(defn yah []
+  [:div
+    [:h1 "Yah"]
+    [:p (str @wow)]
+    [button]])
+
+(defn kelson [text]
+  [:div
+    [:h3 "TESTING " text]
+    [:p "testing again"]])
+
 (defn home-page []
   (fn []
     [:span.main
      [:h1 "Welcome to citytrail"]
      [:ul
       [:li [:a {:href (path-for :items)} "Items of citytrail"]]
-      [:li [:a {:href "/borken/link"} "Borken link"]]]]))
+      [:li [:a {:href "/borken/link"} "Borken link"]]]
+     [yah]
+     [kelson "A"]
+     [kelson "B"]]))
 
 
 
