@@ -1,6 +1,7 @@
 (ns citytrail.itinerary
 (:require
 	[reagent.core :as reagent]
+	[citytrail.core :as core]
 )
 	)
 
@@ -106,7 +107,7 @@
 (defn body []
 	[:div
 		[draw-timestamp]
-		(for [component (get-in @itinerary-data [:components])]
+		(for [component (get-in @core/itinerary-info [:components])]
 			[get-component component]
 		)
 	]
@@ -116,7 +117,7 @@
 	[:div.container
 		[:div.row
 			[:h1.it-title "Itinerary"]
-			[:h3.city (get-in @itinerary-data [:header :city])]
+			[:h3.city (get-in @core/itinerary-info [:header :city])]
 		]
 	]
 )
