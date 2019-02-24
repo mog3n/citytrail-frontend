@@ -17,7 +17,7 @@
 
 .timestamp {
   font-weight: 500;
-  font-size: 12pt;
+  font-size: 11pt;
 }
 
 .timeline-container{
@@ -37,11 +37,12 @@
 }
 
 .timeline-line{
-  display: inline-block;
+  display: block;
   margin: 0;
+  margin-left: 49%;
   padding: 0;
-  width: 5px;
-  height: 15px;
+  width: 4px;
+  height: 25px;
   background-color: #00FF29;
 }
 
@@ -52,6 +53,7 @@
 }
 
 .it-title {
+  padding-left: 10px;
   font-weight: 300;
   font-size: 2em;
 }
@@ -89,10 +91,10 @@
 
 .city{
   float: right;
-  margin-top: 5px;
-  margin-left: 50px;
+  margin-top: 8px;
+  margin-left: 15px;
 
-  font-size: 20pt;
+  font-size: 17pt;
   font-weight: 300;
 }
 
@@ -118,4 +120,61 @@ a {
 
 a:hover {
   text-decoration: underline;
+}
+
+.recommended-name{
+  font-weight: 300;
+  font-size: 18pt;
+  padding-top: 3px;
+  padding-left: 9px;
+  padding-right: 9px;
+  padding-bottom: 5px;
+}
+
+.recommended-container{
+  background-color: #7EB4DB;
+  margin-left: 25px;
+  margin-right: 25px;
+}
+
+.left-thing{
+  height: 13px;
+  width: 4px;
+  margin-left: 40px;
+  background-color: #E7E7E7;
+}
+
+.recommended-title {
+  font-weight: 500;
+  background-color: #26475F;
+  font-size: 10pt;
+
+}
+
+.table-cell{
+  display: table-cell;
+}
+
+.header-center{
+  text-align: center;
+  align-content: center;
+  align-items: center;
+  display: table-cell;
+}
+
+.btn-container{
+  display: block;
+  margin-left: 25px;
+  margin-right: 25px;
+  background-color: #7EB4DB;
+  color: #fff;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border-radius: 50px;
+
+  font-weight: 500;
+  font-size: 11.5pt;
+
 }

@@ -213,8 +213,8 @@
 
 (defn itinerary-page []
   (fn [] [:div
-      [itinerary/header]
-      [itinerary/body]
+      [itinerary/header itinerary-info]
+      [itinerary/body itinerary-info]
     ])
   )
 
