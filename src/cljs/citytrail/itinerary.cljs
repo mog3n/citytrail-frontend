@@ -120,7 +120,7 @@
 (defn body [thedata]
 	[:div
 		[draw-timestamp]
-		(for [component (get-in @thedata [:components])]
+		(for [component (get-in @itinerary-data [:components])]
 			[get-component component]
 		)
 	]
@@ -131,7 +131,7 @@
 		[:div.table-cell
 			[:div.row.inline-block
 				[:h1.it-title "Itinerary"]
-				[:h3.city (get-in @thedata [:header :city])]
+				[:h3.city (get-in @itinerary-data [:header :city])]
 		]
 		]
 	]
